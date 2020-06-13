@@ -29,6 +29,13 @@ import tschipp.carryon.common.helper.ScriptParseHelper;
 import tschipp.carryon.common.item.ItemCarryonEntity;
 import tschipp.carryon.common.scripting.CarryOnOverride;
 import tschipp.carryon.common.scripting.ScriptChecker;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 public class RenderEntityEvents
 {
@@ -56,9 +63,9 @@ public class RenderEntityEvents
 
 			if (entity != null)
 			{
-				double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialticks;
-				double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialticks;
-				double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialticks;
+				double d0 = player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * partialticks;
+				double d1 = player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * partialticks;
+				double d2 = player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * partialticks;
 
 				entity.setPosition(d0, d1, d2);
 				entity.rotationYaw = 0.0f;
@@ -127,9 +134,9 @@ public class RenderEntityEvents
 
 				RenderHelper.disableStandardItemLighting();
 				GlStateManager.disableRescaleNormal();
-				GlStateManager.activeTexture(GLX.GL_TEXTURE1);
+				GlStateManager.activeTexture(GL13.GL_TEXTURE1);
 				GlStateManager.disableTexture();
-				GlStateManager.activeTexture(GLX.GL_TEXTURE0);
+				GlStateManager.activeTexture(GL13.GL_TEXTURE0);
 
 				if (perspective == 0)
 				{
@@ -144,9 +151,9 @@ public class RenderEntityEvents
 	{
 		if (entity.ticksExisted == 0)
 		{
-			entity.lastTickPosX = entity.posX;
-			entity.lastTickPosY = entity.posY;
-			entity.lastTickPosZ = entity.posZ;
+			entity.lastTickPosX = entity.getPosX();
+			entity.lastTickPosY = entity.getPosY();
+			entity.lastTickPosZ = entity.getPosZ();
 		}
 
 		float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw);
@@ -159,7 +166,7 @@ public class RenderEntityEvents
 
 		int j = i % 65536;
 		int k = i / 65536;
-		GLX.glMultiTexCoord2f(GLX.GL_TEXTURE1, j, k);
+		GL13.glMultiTexCoord2f(GL13.GL_TEXTURE1, j, k);
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		
@@ -167,7 +174,7 @@ public class RenderEntityEvents
 		
 		
 		
-		Minecraft.getInstance().getRenderManager().renderEntity(entity, 0.0D, 0.0D, 0.0D, f, 0.0F, true);
+//		Minecraft.getInstance().getRenderManager().renderEntity(entity, 0.0D, 0.0D, 0.0D, f, 0.0F, true);
 		this.setLightmapDisabled(true);
 	}
 
@@ -175,12 +182,12 @@ public class RenderEntityEvents
 	@OnlyIn(Dist.CLIENT)
 	private int getBrightnessForRender(Entity entity, PlayerEntity player)
 	{
-		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(MathHelper.floor(player.posX), 0, MathHelper.floor(player.posZ));
+		BlockPos.Mutable blockpos$mutableblockpos = new BlockPos.Mutable(MathHelper.floor(player.getPosX()), 0, MathHelper.floor(player.getPosZ()));
 
 		if (entity.world.isBlockLoaded(blockpos$mutableblockpos))
 		{
-			blockpos$mutableblockpos.setY(MathHelper.floor(player.posY + entity.getEyeHeight()));
-			return entity.world.getCombinedLight(blockpos$mutableblockpos, 0);
+			blockpos$mutableblockpos.setY(MathHelper.floor(player.getPosY() + entity.getEyeHeight()));
+			return entity.world.getLightSubtracted(blockpos$mutableblockpos, 0);
 		}
 		else
 		{
@@ -191,7 +198,7 @@ public class RenderEntityEvents
 	@OnlyIn(Dist.CLIENT)
 	private void setLightmapDisabled(boolean disabled)
 	{
-		GlStateManager.activeTexture(GLX.GL_TEXTURE1);
+		GlStateManager.activeTexture(GL13.GL_TEXTURE1);
 
 		if (disabled)
 		{
@@ -202,7 +209,7 @@ public class RenderEntityEvents
 			GlStateManager.enableTexture();
 		}
 
-		GlStateManager.activeTexture(GLX.GL_TEXTURE0);
+		GlStateManager.activeTexture(GL13.GL_TEXTURE0);
 	}
 
 	/*
@@ -230,13 +237,13 @@ public class RenderEntityEvents
 			
 			if (entity != null)
 			{
-				double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialticks;
-				double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialticks;
-				double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialticks;
+				double d0 = player.lastTickPosX + (player.getPosX() - player.lastTickPosX) * partialticks;
+				double d1 = player.lastTickPosY + (player.getPosY() - player.lastTickPosY) * partialticks;
+				double d2 = player.lastTickPosZ + (player.getPosZ() - player.lastTickPosZ) * partialticks;
 
-				double c0 = clientPlayer.lastTickPosX + (clientPlayer.posX - clientPlayer.lastTickPosX) * partialticks;
-				double c1 = clientPlayer.lastTickPosY + (clientPlayer.posY - clientPlayer.lastTickPosY) * partialticks;
-				double c2 = clientPlayer.lastTickPosZ + (clientPlayer.posZ - clientPlayer.lastTickPosZ) * partialticks;
+				double c0 = clientPlayer.lastTickPosX + (clientPlayer.getPosX() - clientPlayer.lastTickPosX) * partialticks;
+				double c1 = clientPlayer.lastTickPosY + (clientPlayer.getPosY() - clientPlayer.lastTickPosY) * partialticks;
+				double c2 = clientPlayer.lastTickPosZ + (clientPlayer.getPosZ() - clientPlayer.lastTickPosZ) * partialticks;
 
 				Vec3d cameraPos =  Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 				

@@ -62,7 +62,7 @@ public class Configs {
 	}
 	
 	@SubscribeEvent
-	public static void onChange(final ModConfig.ConfigReloading event)
+	public static void onChange(final ModConfig.ModConfigEvent event)
 	{
 		if(event.getConfig().getModId().equals(CarryOn.MODID))
 		{
